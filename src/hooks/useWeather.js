@@ -14,7 +14,6 @@ const useWeather = () => {
     longitude: "",
     latitude: "",
   });
-  
 
   const [loading, setLoading] = useState({
     state: false,
@@ -31,9 +30,13 @@ const useWeather = () => {
         message: "Loading...",
       });
 
-      const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall/day_summary?lat=${latitude}&lon=${longitude}&appid=${import.meta.env.VITE_WEATHER_API_KEY}&units=metric`);
+      const response = await fetch(
+        `https://api.openweathermap.org/data/3.0/onecall/day_summary?lat=${latitude}&lon=${longitude}&appid=${
+          import.meta.env.VITE_WEATHER_API_KEY
+        }&units=metric`
+      );
       if (!response.ok) {
-        const errorMessage = `Fetcing weather data failed: ${response.status}`;
+        const errorMessage = `Fetching weather data failed: ${response.status}`;
         throw new Error(errorMessage);
       }
 
@@ -50,33 +53,34 @@ const useWeather = () => {
         time: data?.dt,
         longitude: longitude,
         latitude: latitude,
-      }
+      };
       setWeather(updateWeatherData);
-
-  } catch (error) {
-    setError(error);
-  } finally {
-    setLoading({
-      ...loading,
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading({
+        ...loading,
         state: false,
         message: "",
       });
+    }
   };
+
   useEffect(() => {
     setLoading({
-        loading: true,
-        message: "Finding your location...",
-    })
-    navigator.geolocation.getCurrentPosition(function (position) => {
-        fetchWeatherData(position.coords.latitude, position.coords.longitude);
-    })
-    
-  },[]);
+      state: true,
+      message: "Finding your location...",
+    });
+    navigator.geolocation.getCurrentPosition(function (position) {
+      fetchWeatherData(position.coords.latitude, position.coords.longitude);
+    });
+  }, []);
+
   return {
     weather,
     loading,
     error,
-  }
+  };
 };
 
 export default useWeather;
